@@ -20,8 +20,10 @@ import string
 import threading
 import codecs
 import logging
+import tempfile
 from oeqa.utils.dump import HostDumper
 from collections import defaultdict
+import importlib
 
 # Get Unicode non printable control chars
 control_range = list(range(0,32))+list(range(127,160))
@@ -168,6 +170,21 @@ class QemuRunner:
         return self.launch(launch_cmd, qemuparams=qemuparams, get_ip=get_ip, extra_bootparams=extra_bootparams, env=env)
 
     def launch(self, launch_cmd, get_ip = True, qemuparams = None, extra_bootparams = None, env = None):
+        # use logfile to determine the recipe-sysroot-native path and
+        # then add in the site-packages path components and add that
+        # to the python sys.path so qmp.py can be found.
+        python_path = os.path.dirname(os.path.dirname(self.logfile))
+        python_path += "/recipe-sysroot-native/usr/lib/python3.9/site-packages"
+        sys.path.append(python_path)
+        importlib.invalidate_caches()
+        try:
+            qmp = importlib.import_module("qmp")
+        except:
+            self.logger.error("qemurunner: qmp.py missing, please ensure it's installed")
+            return False
+        qmp_port = self.tmpdir + "/." + next(tempfile._get_candidate_names())
+        qmp_param = ' -S -qmp unix:%s,server,wait' % (qmp_port)
+
         try:
             if self.serial_ports >= 2:
                 self.threadsock, threadport = self.create_socket()
@@ -184,7 +201,8 @@ class QemuRunner:
         # and analyze descendents in order to determine it.
         if os.path.exists(self.qemu_pidfile):
             os.remove(self.qemu_pidfile)
-        self.qemuparams = 'bootparams="{0}" qemuparams="-pidfile {1}"'.format(bootparams, self.qemu_pidfile)
+        self.qemuparams = 'bootparams="{0}" qemuparams="-pidfile {1} {2}"'.format(bootparams, self.qemu_pidfile, qmp_param)
+
         if qemuparams:
             self.qemuparams = self.qemuparams[:-1] + " " + qemuparams + " " + '\"'
 
@@ -250,6 +268,19 @@ class QemuRunner:
 
         if self.runqemu_exited:
             return False
+
+        # Create the client socket for the QEMU Monitor Control Socket
+        # This will allow us to read status from Qemu if the the process
+        # is still alive
+        try:
+            self.qmp = qmp.QEMUMonitorProtocol(qmp_port)
+            self.qmp.connect()
+        except socket.error as msg:
+            self.logger.error("Failed to connect qemu monitor socket: %s" % msg[1])
+            return False
+
+        # Release the qemu porcess to continue running
+        self.run_monitor('cont')
 
         if not self.is_alive():
             self.logger.error("Qemu pid didn't appear in %s seconds (%s)" %
@@ -376,7 +407,6 @@ class QemuRunner:
                         sock.close()
                         stopread = True
 
-
         if not reachedlogin:
             if time.time() >= endtime:
                 self.logger.warning("Target didn't reach login banner in %d seconds (%s)" %
@@ -391,6 +421,7 @@ class QemuRunner:
             self.stop()
             return False
 
+        self._dump_host()
         # If we are not able to login the tests can continue
         try:
             (status, output) = self.run_serial(self.boot_patterns['send_login_user'], raw=True, timeout=120)
@@ -437,6 +468,9 @@ class QemuRunner:
             self.runqemu.stdout.close()
             self.runqemu_exited = True
 
+        if hasattr(self, 'qmp') and self.qmp:
+            self.qmp.close()
+            self.qmp = None
         if hasattr(self, 'server_socket') and self.server_socket:
             self.server_socket.close()
             self.server_socket = None
@@ -494,6 +528,9 @@ class QemuRunner:
                         self.qemupid = int(qemu_pid)
                         return True
         return False
+
+    def run_monitor(self, command, timeout=60):
+        return self.qmp.cmd(command)
 
     def run_serial(self, command, raw=False, timeout=60):
         # We assume target system have echo to get command status
