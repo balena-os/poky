@@ -1514,7 +1514,10 @@ class FetchMethod(object):
                         raise UnpackError("Unable to unpack deb/ipk package - does not contain data.tar.* file", urldata.url)
                 else:
                     raise UnpackError("Unable to unpack deb/ipk package - could not list contents", urldata.url)
-                cmd = 'ar x %s %s && tar --no-same-owner -xpf %s && rm %s' % (file, datafile, datafile, datafile)
+                if datafile.endswith('.tzst') or datafile.endswith('.tar.zst'):
+                    cmd = 'ar x %s %s && tar --use-compress-program=unzstd --no-same-owner -xpf %s && rm %s' % (file, datafile, datafile, datafile)
+                else:
+                    cmd = 'ar x %s %s && tar --no-same-owner -xpf %s && rm %s' % (file, datafile, datafile, datafile)
 
         # If 'subdir' param exists, create a dir and use it as destination for unpack cmd
         if 'subdir' in urldata.parm:
