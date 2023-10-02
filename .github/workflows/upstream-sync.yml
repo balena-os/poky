@@ -29,14 +29,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
         with:
           ref: ${{ matrix.branch }}
 
       # https://github.com/aormsby/Fork-Sync-With-Upstream-action
       - name: Sync upstream commits
         id: sync
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+        uses: aormsby/Fork-Sync-With-Upstream-action@9e2e4fd0829a2fe8ca4b13693faac9230c414d51 # v3.4
         with:
           target_sync_branch: ${{ matrix.branch }}
           target_repo_token: ${{ secrets.GITHUB_TOKEN }}
