@@ -40,12 +40,8 @@ SRC_URI = "https://libbsd.freedesktop.org/releases/${BPN}-${PV}.tar.xz"
 
 SRC_URI[sha256sum] = "d7747f8ec1baa6ff5c096a9dd587c061233dec90da0f1aedd66d830f6db6996a"
 
-inherit autotools pkgconfig multilib_header
+inherit autotools pkgconfig
 
 DEPENDS += "libmd"
-
-do_install:append () {
-       oe_multilib_header bsd/sys/cdefs.h
-}
 
 BBCLASSEXTEND = "native nativesdk"
