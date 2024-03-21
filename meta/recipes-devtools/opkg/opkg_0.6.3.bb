@@ -16,6 +16,7 @@ SRC_URI = "http://downloads.yoctoproject.org/releases/${BPN}/${BPN}-${PV}.tar.gz
            file://opkg.conf \
            file://0001-opkg_conf-create-opkg.lock-in-run-instead-of-var-run.patch \
            file://0001-libopkg-Use-libgen.h-to-provide-basename-API.patch \
+	   file://0001-opkg_lock-retry-if-we-fail-to-get-lock.patch \
            file://run-ptest \
            "
 
