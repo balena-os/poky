@@ -139,6 +139,7 @@ PERF_SRC ?= "Makefile \
              tools/scripts \
              scripts/ \
              arch/arm64/tools \
+             arch/${ARCH}/include \
              arch/${ARCH}/Makefile \
 "
 
