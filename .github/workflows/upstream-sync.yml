@@ -2,8 +2,8 @@ name: "Upstream Sync"
 
 on:
   schedule:
-    # at 07:00 every Monday and Thursday
-    - cron: "0 7 * * 1,4"
+    # at 07:15 every day
+    - cron: "15 7 * * *"
   pull_request:
     branches:
       - master
@@ -18,6 +18,7 @@ jobs:
     strategy:
       matrix:
         branch:
+          - master
           - dunfell
           - honister
           - kirkstone
@@ -26,12 +27,11 @@ jobs:
           - pyro
           - rocko
           - sumo
+          - scarthgap
 
     steps:
       - name: Checkout
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4
-        with:
-          ref: ${{ matrix.branch }}
 
       # https://github.com/aormsby/Fork-Sync-With-Upstream-action
       - name: Sync upstream commits
