@@ -17,7 +17,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/github-app-token
       - name: Create GitHub App installation token
-        uses: actions/create-github-app-token@v1.6.2
+        uses: actions/create-github-app-token@2986852ad836768dfea7781f31828eb3e17990fa # v1.6.2
         id: create_token
         with:
           app-id: ${{ vars.FLOWZONE_APP_ID }}
@@ -32,7 +32,7 @@ jobs:
 
       # https://github.com/repo-sync/github-sync
       - name: Repo sync
-        uses: repo-sync/github-sync@v2.3.0
+        uses: repo-sync/github-sync@3832fe8e2be32372e1b3970bbae8e7079edeec88 # v2.3.0
         with:
           source_repo: https://git.yoctoproject.org/git/poky
           source_branch: "*" # Sync all branches
