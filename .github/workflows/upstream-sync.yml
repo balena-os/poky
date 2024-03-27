@@ -26,6 +26,7 @@ jobs:
           - pyro
           - rocko
           - sumo
+          - scarthgap
 
     steps:
       - name: Checkout
