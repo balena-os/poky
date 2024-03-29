@@ -4,9 +4,6 @@ on:
   schedule:
     # at 07:15 AM every day
     - cron: "15 7 * * *"
-  pull_request:
-    branches:
-      - repo-sync
   workflow_dispatch:
 
 jobs:
@@ -15,15 +12,6 @@ jobs:
     name: Repo sync
 
     steps:
-      # https://github.com/marketplace/actions/github-app-token
-      - name: Create GitHub App installation token
-        uses: actions/create-github-app-token@78e5f2ddc08efcb88fbbee6cfa3fed770ba550c3 # v1.9.1
-        id: create_token
-        with:
-          app-id: ${{ vars.FLOWZONE_APP_ID }}
-          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
-          owner: ${{ github.repository_owner }}
-
       # https://github.com/actions/checkout
       - name: Checkout
         uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4
@@ -37,5 +25,5 @@ jobs:
           source_repo: https://git.yoctoproject.org/git/poky
           source_branch: "*" # Sync all branches
           destination_branch: "*" # Sync all branches
-          github_token: ${{ steps.create_token.outputs.token }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           sync_tags: "true"
