@@ -425,8 +425,6 @@ def package_qa_hash_style(path, name, d, elf):
             has_syms = True
         if "GNU_HASH" in line or "MIPS_XHASH" in line:
             sane = True
-        if ("[mips32]" in line or "[mips64]" in line) and d.getVar('TCLIBC') == "musl":
-            sane = True
     if has_syms and not sane:
         path = package_qa_clean_path(path, d, name)
         oe.qa.handle_error("ldflags", "File %s in package %s doesn't have GNU_HASH (didn't pass LDFLAGS?)" % (path, name), d)
