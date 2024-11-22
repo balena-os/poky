@@ -1,0 +1,71 @@
+From a028d36dc7b8d0bc33e674d2a0427b171aef2d32 Mon Sep 17 00:00:00 2001
+From: Markus Volk <f_l_k@t-online.de>
+Date: Wed, 20 Nov 2024 16:30:07 +0100
+Subject: [PATCH] pam/meson.build: disable tests
+
+Otherwise a recipe for pam_wrapper would be required:
+https://gitlab.com/cwrap/pam_wrapper
+
+Signed-off-by: Markus Volk <f_l_k@t-online.de>
+
+Upstream-Status: Inappropriate [oe-specific]
+---
+ pam/meson.build | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/pam/meson.build b/pam/meson.build
+index 8413b58..06d41c4 100644
+--- a/pam/meson.build
++++ b/pam/meson.build
+@@ -19,27 +19,27 @@ pam_gnome_keyring = shared_library('pam_gnome_keyring',
+ )
+ 
+ # pam tests
+-pam_wrapper = dependency('pam_wrapper', required: true)
+-libpamtest = dependency('libpamtest', required: true)
++#pam_wrapper = dependency('pam_wrapper', required: true)
++#libpamtest = dependency('libpamtest', required: true)
+ 
+-subdir('servicedir')
++#subdir('servicedir')
+ 
+-test_bin = executable('pam_test',
+-  sources: [
+-    'test-pam.c',
+-  ],
+-  dependencies: [
+-    libpamtest,
+-    glib_deps,
+-  ],
+-)
++#test_bin = executable('pam_test',
++#  sources: [
++#    'test-pam.c',
++#  ],
++#  dependencies: [
++#    libpamtest,
++#    glib_deps,
++#  ],
++#)
+ 
+-test('pam-test',
+-  test_bin,
+-  env: {
+-    'LD_PRELOAD': 'libpam_wrapper.so',
+-    'PAM_WRAPPER': '1',
+-    'PAM_WRAPPER_DEBUGLEVEL': '5',
+-    'PAM_WRAPPER_SERVICE_DIR': meson.current_build_dir() + '/servicedir',
+-  },
+-)
++#test('pam-test',
++#  test_bin,
++#  env: {
++#    'LD_PRELOAD': 'libpam_wrapper.so',
++#    'PAM_WRAPPER': '1',
++#    'PAM_WRAPPER_DEBUGLEVEL': '5',
++#    'PAM_WRAPPER_SERVICE_DIR': meson.current_build_dir() + '/servicedir',
++#  },
++#)
+-- 
+2.47.0
+
