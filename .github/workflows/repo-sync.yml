@@ -6,6 +6,9 @@ on:
     - cron: "15 7 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   repo-sync:
     runs-on: ubuntu-latest
