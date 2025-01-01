@@ -1,7 +1,7 @@
-From 68faa63aaad81f4a289e4a03173ab4cf798deb53 Mon Sep 17 00:00:00 2001
+From e91edf28a5afa98de8b420430bf80e3e741060f4 Mon Sep 17 00:00:00 2001
 From: Azat Khuzhin <a3at.mail@gmail.com>
 Date: Sat, 1 Nov 2014 22:24:32 +0300
-Subject: [PATCH 3/3] Fix 3-d argument for BLKROSET it must be 'const int *'
+Subject: [PATCH] Fix 3-d argument for BLKROSET it must be 'const int *'
 
 Most of *SET ioctls have int type for 3-d argument, except BLKROSET.
 So add bc_arg_type enum, build it into bool_comand and install arg_type
@@ -15,7 +15,6 @@ ftp://ftp.debian.org/debian/pool/main/b/blktool/blktool_4-7.debian.tar.xz
 
 Upstream-Status: Inappropriate [upstream is dead]
 Signed-off-by: Alexander Kanavin <alex.kanavin@gmail.com>
-
 ---
  blktool.c | 11 +++++++++--
  blktool.h |  7 +++++++
@@ -73,6 +72,3 @@ index fce4387..85add83 100644
  };
  
  struct class_operations {
--- 
-2.1.4
-
