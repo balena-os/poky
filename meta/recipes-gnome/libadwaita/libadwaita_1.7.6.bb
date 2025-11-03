@@ -1,5 +1,6 @@
 SUMMARY = "Building blocks for modern GNOME applications"
 HOMEPAGE = "https://gitlab.gnome.org/GNOME/libadwaita"
+BUGTRACKER = "https://gitlab.gnome.org/GNOME/libadwaita/issues"
 LICENSE = "LGPL-2.1-or-later"
 LIC_FILES_CHKSUM = "file://COPYING;md5=4fbd65380cdd255951079008b364516c"
 
