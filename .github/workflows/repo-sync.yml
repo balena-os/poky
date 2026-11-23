@@ -13,20 +13,10 @@ jobs:
   repo-sync:
     runs-on: ubuntu-latest
     name: Repo sync
-
     steps:
-      # https://github.com/actions/checkout
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-
-      # https://github.com/repo-sync/github-sync
       - name: Repo sync
-        uses: repo-sync/github-sync@3832fe8e2be32372e1b3970bbae8e7079edeec88 # v2.3.0
-        with:
-          source_repo: https://git.yoctoproject.org/git/poky
-          source_branch: "*" # Sync all branches
-          destination_branch: "*" # Sync all branches
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          sync_tags: "true"
+        run: |
+          git clone --bare https://git.yoctoproject.org/git/poky .
+          git remote add github https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push github 'refs/heads/*:refs/heads/*' --force --prune
+          git push github 'refs/tags/*:refs/tags/*' --force --prune
